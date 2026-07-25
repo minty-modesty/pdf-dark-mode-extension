@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <main>
+    <header>
+      <h1>PDF Dark Mode</h1>
+      <button id="toggle" class="toggle" aria-pressed="false" title="Toggle dark mode">
+        <span class="knob"></span>
+      </button>
+    </header>
+
+    <p id="hint" class="hint" hidden>This tab doesn't look like a PDF. Open a PDF, then toggle.</p>
+
+    <section id="controls">
+      <div class="row themes" role="radiogroup" aria-label="Theme">
+        <button class="theme" data-theme="soft" title="Soft dark — easier on images">
+          <span class="swatch swatch-soft"></span>Soft
+        </button>
+        <button class="theme" data-theme="black" title="True black — maximum contrast">
+          <span class="swatch swatch-black"></span>Black
+        </button>
+        <button class="theme" data-theme="sepia" title="Warm sepia night">
+          <span class="swatch swatch-sepia"></span>Sepia
+        </button>
+      </div>
+
+      <label class="row slider">
+        <span>Brightness</span>
+        <input id="brightness" type="range" min="70" max="130" step="5" />
+        <output id="brightnessOut"></output>
+      </label>
+
+      <label class="row slider">
+        <span>Contrast</span>
+        <input id="contrast" type="range" min="70" max="130" step="5" />
+        <output id="contrastOut"></output>
+      </label>
+
+      <label class="row auto">
+        <input id="auto" type="checkbox" />
+        <span>Automatically darken every PDF I open</span>
+      </label>
+    </section>
+
+    <footer>
+      <span>100% local — no data ever leaves your browser</span>
+    </footer>
+  </main>
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

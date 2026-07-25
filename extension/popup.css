@@ -1,0 +1,100 @@
+:root {
+  color-scheme: dark;
+  --bg: #1c1c22;
+  --panel: #26262e;
+  --text: #e8e8ee;
+  --muted: #9a9aa6;
+  --accent: #7aa2ff;
+}
+
+* { box-sizing: border-box; margin: 0; }
+
+body {
+  width: 300px;
+  background: var(--bg);
+  color: var(--text);
+  font: 13px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+main { padding: 14px; }
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+h1 { font-size: 15px; font-weight: 600; }
+
+.toggle {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  border: none;
+  border-radius: 12px;
+  background: #3a3a44;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.toggle[aria-pressed="true"] { background: var(--accent); }
+.toggle .knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.15s;
+}
+.toggle[aria-pressed="true"] .knob { transform: translateX(20px); }
+.toggle:disabled { opacity: 0.45; cursor: default; }
+
+.hint {
+  background: var(--panel);
+  border-radius: 8px;
+  padding: 8px 10px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.row { margin-bottom: 10px; }
+
+.themes { display: flex; gap: 6px; }
+.theme {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 0;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+}
+.theme.selected { border-color: var(--accent); }
+.swatch { width: 12px; height: 12px; border-radius: 3px; }
+.swatch-soft { background: linear-gradient(135deg, #2a2a30, #55555e); }
+.swatch-black { background: #000; border: 1px solid #444; }
+.swatch-sepia { background: linear-gradient(135deg, #2e2417, #6b5636); }
+
+.slider { display: flex; align-items: center; gap: 8px; }
+.slider span { width: 68px; color: var(--muted); }
+.slider input { flex: 1; accent-color: var(--accent); }
+.slider output { width: 38px; text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+.auto { display: flex; align-items: flex-start; gap: 8px; color: var(--muted); cursor: pointer; }
+.auto input { accent-color: var(--accent); margin-top: 2px; }
+
+footer {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid #33333c;
+  color: var(--muted);
+  font-size: 11px;
+  text-align: center;
+}
