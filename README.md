@@ -39,7 +39,7 @@ Every permission, and why it is there:
   before you have clicked anything. Leave the switch off and Chrome never asks you. Decline the
   prompt and the manual toggle carries on working.
 
-Full privacy policy: <https://liuhao04.github.io/pdf-dark-mode-extension/privacy.html>
+Full privacy policy: <https://minty-modesty.github.io/pdf-dark-mode-extension/privacy.html>
 
 ## Install
 
@@ -48,7 +48,7 @@ Chrome Web Store: <https://chromewebstore.google.com/detail/cbdeadhjbdomkldbfedf
 From source:
 
 ```
-git clone https://github.com/liuhao04/pdf-dark-mode-extension.git
+git clone https://github.com/minty-modesty/pdf-dark-mode-extension.git
 ```
 
 Open `chrome://extensions`, switch on Developer mode, choose **Load unpacked**, and select the
