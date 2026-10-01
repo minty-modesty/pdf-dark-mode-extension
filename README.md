@@ -17,6 +17,13 @@ you watch. Switch on "auto dark" and every PDF you open afterwards starts dark.
 It works on `https://` PDFs and `file:///` PDFs alike, because it acts on Chrome's PDF viewer element
 rather than on the file.
 
+Since 1.1 the gray area around and between the pages stays dark as well, and Chrome's own toolbar is
+left alone. Chrome draws its PDF viewer in a separate process that extensions cannot style, so a plain
+colour inversion used to turn that dark surround light gray. 1.1 inverts through a click-through layer
+that starts below the toolbar, and an SVG filter picks out the viewer's flat gray before the inversion
+so it lands back on dark gray. It only matches neutral gray areas a few pixels wide, so text edges are
+never touched. If you prefer the old look, untick "Dark background around pages" in the popup.
+
 ![Dark PDF in Chrome's built-in viewer](docs/screenshots/shot-1.png)
 
 ![The three themes and the brightness slider](docs/screenshots/shot-2.png)
@@ -32,8 +39,8 @@ Every permission, and why it is there:
 
 - **`activeTab`**: access to the tab you are looking at, granted at the moment you click the icon.
   Nothing runs in the background.
-- **`scripting`**: needed to inject the CSS filter that darkens the viewer. The injected functions
-  live in `extension/shared.js`; they set styles and read nothing out of the page.
+- **`scripting`**: needed to inject the CSS filter that darkens the viewer. The injected code
+  lives in `extension/page.js`; it sets styles and reads nothing out of the page.
 - **`storage`**: your theme and brightness, kept locally.
 - **`<all_urls>`, optional**: requested only if you turn on "auto dark", which has to act on a PDF
   before you have clicked anything. Leave the switch off and Chrome never asks you. Decline the

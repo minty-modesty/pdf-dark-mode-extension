@@ -1,4 +1,4 @@
-import { DEFAULT_SETTINGS, buildFilter, pageApplyDark, pageProbe } from "./shared.js";
+import { DEFAULT_SETTINGS, buildFilter } from "./shared.js";
 
 const $ = (id) => document.getElementById(id);
 let settings = { ...DEFAULT_SETTINGS };
@@ -10,15 +10,19 @@ async function getTab() {
   return t;
 }
 
+async function inject(func, args = []) {
+  const target = { tabId: tab.id };
+  await chrome.scripting.executeScript({ target, files: ["page.js"] });
+  const [res] = await chrome.scripting.executeScript({ target, func, args });
+  return res?.result;
+}
+
 async function probe() {
   try {
-    const [res] = await chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      func: pageProbe,
-    });
-    return res?.result ?? { isPdf: false, active: false };
+    return (await inject(() => self.__pdfdm.probe())) ?? { isPdf: false, active: false };
   } catch {
-    // Restricted page (chrome://, Web Store, etc.)
+    // Restricted page (chrome://, Web Store, another extension's viewer,
+    // or a local file without "Allow access to file URLs").
     return { isPdf: false, active: false, restricted: true };
   }
 }
@@ -26,16 +30,38 @@ async function probe() {
 async function apply(on) {
   const filter = on ? buildFilter(settings) : null;
   try {
-    await chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      func: pageApplyDark,
-      args: [filter],
-    });
+    await inject((f, bg) => self.__pdfdm.apply(f, bg), [filter, settings.darkBg]);
     active = on;
   } catch {
     /* restricted page — probe already disabled the toggle */
   }
   render();
+}
+
+// Explain *why* the toggle can't work here instead of a generic message.
+async function explain(state) {
+  const url = tab?.url || "";
+  const hint = $("hint");
+  if (url.startsWith("file:") && !(await chrome.extension.isAllowedFileSchemeAccess())) {
+    hint.textContent = "";
+    hint.append(
+      "Local PDF files need one extra switch: turn on \"Allow access to file URLs\" for PDF Dark Mode, then reload this tab. "
+    );
+    const a = document.createElement("a");
+    a.href = "#";
+    a.textContent = "Open the setting";
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+      chrome.tabs.create({ url: `chrome://extensions/?id=${chrome.runtime.id}` });
+    });
+    hint.append(a);
+  } else if (url.startsWith("chrome-extension:")) {
+    hint.textContent =
+      "This PDF is open in another extension's viewer (for example Adobe Acrobat). Chrome doesn't let extensions change each other's pages, so open the PDF in Chrome's own viewer to use dark mode.";
+  } else if (state.restricted) {
+    hint.textContent = "Chrome doesn't allow extensions on this page.";
+  }
+  hint.hidden = false;
 }
 
 function render() {
@@ -48,10 +74,11 @@ function render() {
   $("contrast").value = settings.contrast;
   $("contrastOut").textContent = settings.contrast + "%";
   $("auto").checked = settings.auto;
+  $("darkBg").checked = settings.darkBg;
 }
 
 async function save() {
-  await chrome.storage.sync.set({ settings });
+  await chrome.storage.local.set({ settings });
 }
 
 async function reapplyIfActive() {
@@ -59,13 +86,13 @@ async function reapplyIfActive() {
 }
 
 async function init() {
-  const stored = await chrome.storage.sync.get({ settings: DEFAULT_SETTINGS });
+  const stored = await chrome.storage.local.get({ settings: DEFAULT_SETTINGS });
   settings = { ...DEFAULT_SETTINGS, ...stored.settings };
   tab = await getTab();
 
   const state = await probe();
   active = state.active;
-  if (!state.isPdf) $("hint").hidden = false;
+  if (!state.isPdf) await explain(state);
   if (state.restricted) $("toggle").disabled = true;
   render();
 
@@ -91,6 +118,12 @@ async function init() {
     });
     $(key).addEventListener("change", save);
   }
+
+  $("darkBg").addEventListener("change", async () => {
+    settings.darkBg = $("darkBg").checked;
+    await save();
+    await reapplyIfActive();
+  });
 
   $("auto").addEventListener("change", async () => {
     if ($("auto").checked) {

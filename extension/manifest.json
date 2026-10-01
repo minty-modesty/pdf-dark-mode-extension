@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "PDF Dark Mode — Night Reader for PDFs",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "One-click dark mode for any PDF in Chrome. Soft dark, true black & sepia themes, brightness control. 100% local & private.",
   "permissions": ["activeTab", "scripting", "storage"],
   "optional_host_permissions": ["<all_urls>"],

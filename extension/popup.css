@@ -89,6 +89,7 @@ h1 { font-size: 15px; font-weight: 600; }
 
 .auto { display: flex; align-items: flex-start; gap: 8px; color: var(--muted); cursor: pointer; }
 .auto input { accent-color: var(--accent); margin-top: 2px; }
+.hint a { color: var(--accent); }
 
 footer {
   margin-top: 12px;
